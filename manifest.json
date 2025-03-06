@@ -1,0 +1,12 @@
+{
+    "id": "flash-card-generator",
+    "name": "flash-card-generator",
+    "version": "1.0.0",
+    "minAppVersion": "1.0.0",
+    "description": "TODO",
+    "author": "Kyle Miller",
+    "authorUrl": "https://github.com/kcnklub",
+    "helpUrl": "todo",
+    "isDesktopOnly": false,
+    "fundingUrl": "todo"
+}
