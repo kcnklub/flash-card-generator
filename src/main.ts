@@ -23,4 +23,8 @@ export default class FCGPlugin extends Plugin {
         console.log("Todo build the application!")
     }
 
+    async saveSettings(): Promise<void> {
+        await this.saveData(this.settings);
+    }
+
 }
