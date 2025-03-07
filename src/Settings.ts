@@ -32,8 +32,9 @@ export default class Settings extends PluginSettingTab {
                 for (const m of models.models) {
                     dropDown.addOption(m.name, m.model)
                 }
-                dropDown.onChange((v) => {
-                    console.log(v)
+                dropDown.onChange(async (v) => {
+                    this.plugin.settings.model = v
+                    await this.plugin.saveSettings()
                 })
             })
         console.log("This workings?")
