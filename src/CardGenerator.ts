@@ -1,5 +1,6 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts"
 import { ChatOllama } from '@langchain/ollama'
+import { Settings } from "./Settings";
 
 const prompt = ChatPromptTemplate.fromMessages([
     [
@@ -13,11 +14,30 @@ export default class CardGenerator {
 
     private llm: ChatOllama;
 
-    constructor() {
-        // make this configurable so that you can use a larger number of models depending on preference.
+    constructor(settings: Settings) {
         this.llm = new ChatOllama({
-            model: "llama3.1"
+            model: settings.model
         })
+    }
+
+    public async test() {
+        console.log("test")
+        const prompt = ChatPromptTemplate.fromMessages([
+            [
+                "system",
+                "You are a helpful assistant that translates {input_language} to {output_language}.",
+            ],
+            ["human", "{input}"],
+        ]);
+
+        const chain = prompt.pipe(this.llm);
+        const message = await chain.invoke({
+            input_language: "English",
+            output_language: "German",
+            input: "I love programming.",
+        });
+
+        console.log(message)
     }
 
 

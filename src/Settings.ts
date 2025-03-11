@@ -3,7 +3,11 @@ import ollama from "ollama";
 
 import FCGPlugin from "./main";
 
-export default class Settings extends PluginSettingTab {
+export interface Settings {
+    model: string;
+}
+
+export class SettingsTab extends PluginSettingTab {
 
     private plugin: FCGPlugin;
 
@@ -22,9 +26,6 @@ export default class Settings extends PluginSettingTab {
         });
 
         new Setting(containerEl)
-            .setName('Date format')
-            .setDesc('Default date format');
-        new Setting(containerEl)
             .setName('Model')
             .setDesc('Select which model that you would like to use.')
             .addDropdown(async (dropDown) => {
@@ -37,6 +38,5 @@ export default class Settings extends PluginSettingTab {
                     await this.plugin.saveSettings()
                 })
             })
-        console.log("This workings?")
     }
 }

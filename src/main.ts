@@ -1,30 +1,29 @@
-
 import { Plugin } from "obsidian"
 import CardGenerator from "./CardGenerator"
-import Settings from "./Settings";
+import { Settings, SettingsTab } from "./Settings";
 
 export default class FCGPlugin extends Plugin {
 
     private cardGenerator: CardGenerator;
-    public settings: any;
+    public settings: Settings;
 
     async onload(): Promise<void> {
-        console.log("Plugin Loading")
-        this.cardGenerator = new CardGenerator();
+        await this.loadPluginData();
 
-        this.addSettingTab(new Settings(this.app, this))
+        this.addSettingTab(new SettingsTab(this.app, this))
+
+        this.app.workspace.onLayoutReady(async () => {
+            this.cardGenerator = new CardGenerator(this.settings);
+        })
     }
 
-    async loadData(): Promise<any> {
-        this.settings = Object.assign({}, await this.loadData())
-    }
-
-    async onunload(): Promise<void> {
-        console.log("Todo build the application!")
+    async loadPluginData(): Promise<any> {
+        const loadedData = await this.loadData();
+        this.settings = Object.assign({}, loadedData);
     }
 
     async saveSettings(): Promise<void> {
+        console.log("saving: " + this.settings)
         await this.saveData(this.settings);
     }
-
 }
