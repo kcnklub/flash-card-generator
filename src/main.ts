@@ -2,10 +2,9 @@ import { ItemView, Plugin, WorkspaceLeaf } from "obsidian"
 import CardGenerator from "./CardGenerator"
 import { Settings, SettingsTab } from "./Settings";
 
-
 export default class FCGPlugin extends Plugin {
 
-    private cardGenerator: CardGenerator;
+    public cardGenerator: CardGenerator;
     public settings: Settings;
 
     async onload(): Promise<void> {
@@ -55,12 +54,9 @@ export default class FCGPlugin extends Plugin {
     async saveSettings(): Promise<void> {
         await this.saveData(this.settings);
     }
-
-
 }
 
 const VIEW_TYPE_EXAMPLE = 'example-view';
-
 
 class ExampleView extends ItemView {
 
@@ -85,11 +81,26 @@ class ExampleView extends ItemView {
         const header = container.createEl('h4', { text: 'Example view' });
         header.addEventListener("click", () => {
             console.log("you clicked the listener")
+            this.plugin.cardGenerator.test()
         })
 
         const files = this.plugin.app.vault.getMarkdownFiles();
         for (const f of files) {
-            container.createEl("p", { "text": f.name })
+            const fileContainer = container.createDiv();
+            fileContainer.createEl("p", { "text": f.name })
+            const generator = fileContainer.createEl("button", { "text": ">Gen<" })
+            generator.addEventListener("click", async () => {
+
+                const content = await f.vault.read(f)
+                const cards = await this.plugin.cardGenerator.generateCards(content)
+                // create the file for the cards to be saved too!
+            })
+
+            const deletor = fileContainer.createEl("button", { "text": ">Delete<" })
+            deletor.addEventListener("click", async () => {
+                // TODO delete the flash card file is it exists
+
+            })
         }
     }
 
