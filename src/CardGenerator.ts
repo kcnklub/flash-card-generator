@@ -23,9 +23,9 @@ const cardsSchema = z.object({
     }))
 }).describe("Flashcards for the user")
 
-type Cards = z.infer<typeof cardsSchema>
+export type Cards = z.infer<typeof cardsSchema>
 
-export default class CardGenerator {
+export class CardGenerator {
 
     private llm: ChatOllama;
 

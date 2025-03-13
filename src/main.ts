@@ -1,5 +1,6 @@
-import { ItemView, Plugin, WorkspaceLeaf } from "obsidian"
-import CardGenerator from "./CardGenerator"
+import { ItemView, Plugin, TFile, WorkspaceLeaf } from "obsidian"
+import { CardGenerator } from "./CardGenerator"
+import { buildFile, createFlashCardFilePath } from "./BuilderUtils";
 import { Settings, SettingsTab } from "./Settings";
 
 export default class FCGPlugin extends Plugin {
@@ -54,6 +55,16 @@ export default class FCGPlugin extends Plugin {
     async saveSettings(): Promise<void> {
         await this.saveData(this.settings);
     }
+
+    async makeFlashCard(f: TFile) {
+        const noteContent = await f.vault.read(f)
+        const cards = await this.cardGenerator.generateCards(noteContent)
+
+        const content = buildFile(cards)
+        const newFileName = createFlashCardFilePath(f.path)
+
+        await f.vault.create(newFileName, content)
+    }
 }
 
 const VIEW_TYPE_EXAMPLE = 'example-view';
@@ -90,16 +101,19 @@ class ExampleView extends ItemView {
             fileContainer.createEl("p", { "text": f.name })
             const generator = fileContainer.createEl("button", { "text": ">Gen<" })
             generator.addEventListener("click", async () => {
-
-                const content = await f.vault.read(f)
-                const cards = await this.plugin.cardGenerator.generateCards(content)
-                // create the file for the cards to be saved too!
+                this.plugin.makeFlashCard(f)
             })
 
             const deletor = fileContainer.createEl("button", { "text": ">Delete<" })
             deletor.addEventListener("click", async () => {
                 // TODO delete the flash card file is it exists
+                const newFileName = f.path.replace(".md", "-flashcards.md");
 
+                const flashCardFile = f.vault.getFileByPath(newFileName);
+
+                if (flashCardFile) {
+                    await f.vault.delete(flashCardFile, true)
+                }
             })
         }
     }
